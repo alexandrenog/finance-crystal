@@ -6,4 +6,5 @@
 *.exe
 *.exp
 *.pdb
+*.lib
 data.yaml
