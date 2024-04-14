@@ -1,0 +1,13 @@
+name: finance
+version: 0.1.0
+
+authors:
+  - Alexandre Souto Nogueira <alexandre.nog212@gmail.com>
+
+targets:
+  finance:
+    main: src/finance.cr
+
+crystal: 1.7.3
+
+license: MIT
