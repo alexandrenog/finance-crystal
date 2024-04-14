@@ -1,7 +1,8 @@
 require "./console_read.cr"
 
 class ActionPerformer
-    def self.exec(action : Action, data : Data)
+    def self.exec(action : Action, app : App)
+        data = app.data
         case action
         when Action::CHANGE_CURRENT_BALANCE
             change_current_balance(data)
@@ -10,15 +11,15 @@ class ActionPerformer
         when Action::ADD_PERIODIC_EXPENSE
             add_periodic_expense(data)
         when Action::WATCH_PROSPECTIONS
-            watch_prospections(data)
+            watch_prospections(data, app)
         when Action::LIST_PERIODIC_TRANSACTIONS
-            list_periodic_transactions(data)
+            list_periodic_transactions(data, app)
         end
         data.save
     end 
     def self.change_current_balance(data)
         new_balance = read_float("Insert New balance = $")
-        data.current_value = MonetaryValue.from_float(new_balance)
+        data.current_balance = MonetaryValue.from_float(new_balance)
     end
     def self.add_periodic_income(data)
         value = read_float("Insert Income Value = $")
@@ -34,28 +35,22 @@ class ActionPerformer
             data.add_periodic_montary_changes PeriodicMonetaryChange.new(MonetaryValue.from_float(value).negative, IntervalType.from_value(index), start_after)
         end
     end
-    def self.watch_prospections(data)
-        if screen = data.screen_reference
-            screen.refresh_screen
-            data.view_prospections
-            watch_options =  OptionGroup.new([] of Option).with_cancel("Go Back")
-            while option = watch_options.ask
-                break if option.is_cancel?
-                screen.refresh_screen
-                data.view_prospections
-            end
-        end
+    def self.watch_prospections(data, app)
+        show_info(data.formatted_prospections, app)
     end
-    def self.list_periodic_transactions(data)
-        if screen = data.screen_reference
-            screen.refresh_screen
-            puts "\n" + data.list_monetary_changes
-            watch_options =  OptionGroup.new([] of Option).with_cancel("Go Back")
-            while option = watch_options.ask
-                break if option.is_cancel?
-                screen.refresh_screen
-                puts "\n" + data.list_monetary_changes
-            end
+    def self.list_periodic_transactions(data, app)
+        show_info(data.formatted_monetary_changes, app)
+    end
+
+    # auxiliary method (not an action)
+    def self.show_info(content,app)
+        app.refresh_screen
+        puts content
+        watch_options = OptionGroup::EMPTY
+        while option = watch_options.ask
+            break if option.is_cancel?
+            app.refresh_screen
+            puts content
         end
     end
 end

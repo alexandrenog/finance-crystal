@@ -7,6 +7,8 @@ class Option
     end
     def initialize(@description : String, @action : Action)
     end
+    def initialize(@description : String, @action : Action, @sub_group : OptionGroup)
+    end
     def to_s(io : IO)
         io << @description
     end 

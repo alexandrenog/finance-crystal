@@ -1,5 +1,6 @@
 require "./option.cr"
 class OptionGroup
+    EMPTY = OptionGroup.new([] of Option).with_cancel("Go Back")
     property options : Array(Option)
     def initialize(@options : Array(Option)) 
         @options.each_with_index do |opt,i| 
@@ -8,6 +9,7 @@ class OptionGroup
     end
     def to_s(io : IO)
          io << @options.map_with_index{|option,i| " - #{i+1}. #{option.to_s}"}.join("\n")
+         io << EOL
     end
     def include?(index : Int)
         index >= 0 && index < @options.size
@@ -31,7 +33,7 @@ class OptionGroup
         self.choose(opt_index)
     end
 
-    def inquiry(data)
+    def inquiry(app)
         current_option_group = self
         stack = [current_option_group]
         until stack.empty?
@@ -39,14 +41,14 @@ class OptionGroup
             current_option_group = stack.last
 
             # CLI
-            data.screen_reference.not_nil!.refresh_screen
+            app.refresh_screen
             selectedOpt = current_option_group.ask
 
             # Option Evaluation
             if selectedOpt.is_cancel?
                 stack.pop
             elsif action = selectedOpt.action
-                ActionPerformer.exec(action, data)
+                ActionPerformer.exec(action, app)
             elsif sub_group = selectedOpt.sub_group
                 current_option_group = sub_group
                 stack << current_option_group

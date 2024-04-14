@@ -3,10 +3,10 @@ class InfoRow
     def initialize(@data : Data)
     end
     def to_s(io : IO)
-        str = "Current Value = #{data.current_value}"
+        io << "Current Balance = #{data.current_balance}"
         if !data.name.empty?
-            str += "\t Username = " + data.name
+            io << "\t Username = " + data.name
         end
-        io << str
+        io << EOL
     end
 end
