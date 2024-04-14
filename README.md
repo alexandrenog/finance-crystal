@@ -1,4 +1,4 @@
-# finance
+# finance-crystal
 
 A program to generate your finantial prospections.
 
