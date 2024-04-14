@@ -22,7 +22,7 @@ class App
     end
     
     def refresh_screen
-        print "\33c\e[3J\n"
+        print "\33c\e[3J"
         puts @info_row
     end
     
