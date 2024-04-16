@@ -27,10 +27,14 @@ class Data
         values_in_120_days.each_slice(7).map_with_index{|e,i| "Day #{(i*7)+1}: " + e.map(&.to_s).join(", ")}.join("\n")
     end
     def formatted_monetary_changes
+        sort_periodic_montary_changes
         periodic_montary_changes.map(&.to_s).join("\n")
     end
     def add_periodic_montary_changes (change : PeriodicMonetaryChange)
         periodic_montary_changes << change
+        sort_periodic_montary_changes
+    end
+    def sort_periodic_montary_changes
         periodic_montary_changes.sort_by! &.value.signed_cents
     end
     def save

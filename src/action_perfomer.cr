@@ -22,17 +22,21 @@ class ActionPerformer
         data.current_balance = MonetaryValue.from_float(new_balance)
     end
     def self.add_periodic_income(data)
-        value = read_float("Insert Income Value = $")
+        value = MonetaryValue.from_float(read_float("Insert Income Value = $"))
         if index = INCOME_INTERVALS_OPTS.ask.index
             start_after = read_int("Start after N days = ")
-            data.add_periodic_montary_changes PeriodicMonetaryChange.new(MonetaryValue.from_float(value), IntervalType.from_value(index), start_after)
+            title = read_str("Give it a title ( _ for empty) = ").chomp
+            title = "" if title == "_"
+            data.add_periodic_montary_changes PeriodicMonetaryChange.new(value, IntervalType.from_value(index), start_after, title)
         end
     end
     def self.add_periodic_expense(data)
-        value = read_float("Insert Expense Value = $")
+        value = MonetaryValue.from_float(read_float("Insert Expense Value = $")).negative
         if index = EXPENSE_INTERVALS_OPTS.ask.index
             start_after = read_int("Start after N days = ")
-            data.add_periodic_montary_changes PeriodicMonetaryChange.new(MonetaryValue.from_float(value).negative, IntervalType.from_value(index), start_after)
+            title = read_str("Give it a title ( _ for empty) = ").chomp
+            title = "" if title == "_"
+            data.add_periodic_montary_changes PeriodicMonetaryChange.new(value, IntervalType.from_value(index), start_after, title)
         end
     end
     def self.watch_prospections(data, app)
