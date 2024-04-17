@@ -1,6 +1,5 @@
 require "./option.cr"
 class OptionGroup
-    EMPTY = OptionGroup.new([] of Option).with_cancel("Go Back")
     property options : Array(Option), title : String
     def initialize(@options : Array(Option), @title : String = "") 
         @options.each_with_index do |opt,i| 
@@ -17,6 +16,9 @@ class OptionGroup
     def choose(index : Int)
         @options[index]
     end
+    def self.empty
+        OptionGroup.new([] of Option)
+    end
     def with_cancel(desc : String)
         @options << Option.cancel(desc)
         self
@@ -25,10 +27,10 @@ class OptionGroup
     def ask
         puts @title if !@title.empty?
         puts self
-        print "Select Option: "
+        print I18n.t("label.select_option")
         opt_index = read_int - 1
         while !self.include?(opt_index) 
-            print "Select Option: "
+            print I18n.t("label.select_option")
             opt_index = read_int - 1
         end
         self.choose(opt_index)
