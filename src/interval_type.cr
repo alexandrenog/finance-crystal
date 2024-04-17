@@ -6,26 +6,28 @@ enum IntervalType
     TWODAYS_A_WEEK
     ONCE
 
-    def to_s(io : IO)
+    def to_text
         case self
         when MONTHLY
-            io << "monthly"
+            "monthly"
         when WEEKLY
-            io << "weekly"
+            "weekly"
         when DAILY
-            io << "daily"
+            "daily"
         when FIVEDAYS_A_WEEK
-            io << "five days a week"
+            "five days a week"
         when TWODAYS_A_WEEK
-            io << "two days a week"
+            "two days a week"
         when ONCE
-            io << "once"
+            "once"
+        else
+            raise("wont happen :)")
         end
     end
 end
 
 def intervalTypeOption(type : IntervalType)
-    Option.new(type.to_s.capitalize, type.value)
+    Option.new(type.to_text.capitalize, type.value)
 end
 INCOME_INTERVALS_OPTS = OptionGroup.new([
     intervalTypeOption(IntervalType::ONCE),

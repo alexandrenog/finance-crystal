@@ -9,7 +9,7 @@ class PeriodicMonetaryChange
     def initialize(@value : MonetaryValue, @interval_type : IntervalType, @start_at : Time, @title : String)
     end
     def to_s(io : IO)
-        io << "#{@value} #{@interval_type}, #{@start_at > today ? "starts" : "started"} on #{@start_at.to_s("%F")}"
+        io << "#{@value} #{@interval_type.to_text}, #{@start_at > today ? "starts" : "started"} on #{@start_at.to_s("%F")}"
         if(!title.empty?)
             io << "\t -  " << @title 
         end
