@@ -50,8 +50,7 @@ class ActionPerformer
 
     # auxiliary method (not an action)
     def self.show_info(content, title, app)
-        app.refresh_screen
-        puts title
+        app.refresh_screen(title)
         puts content
         watch_options = OptionGroup::EMPTY
         while option = watch_options.ask

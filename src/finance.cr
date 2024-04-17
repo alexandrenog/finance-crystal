@@ -21,9 +21,10 @@ class App
         @main_option_group.inquiry(self)
     end
     
-    def refresh_screen
+    def refresh_screen(title = "")
         print "\33c\e[3J"
-        puts @info_row
+        @info_row.title = title
+        print @info_row
     end
     
 end

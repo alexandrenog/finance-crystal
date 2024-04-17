@@ -27,4 +27,7 @@ class MonetaryValue
         sum_in_cents = self.signed_cents + other.signed_cents
         MonetaryValue.new(sum_in_cents.abs, sum_in_cents.positive?)
     end
+    def <=>(other : MonetaryValue)
+        self.signed_cents <=> other.signed_cents
+    end
 end

@@ -30,12 +30,14 @@ class Data
         end
         
         values_per_month.map{ |values_per_day| # 0..Consts::PROSPECTIONS_MONTHS-1 months list -> 1..28~31 day list
-            values_per_day.each_slice(7).map{ |array_of_tuple| # 1..28~31 days list -> 7 days list
+            month = Consts::MONTH_NAMES[values_per_day.first[0].month]
+            values_alldays_month = values_per_day.each_slice(7).map{ |array_of_tuple| # 1..28~31 days list -> 7 days list
                 first_of_7_days = array_of_tuple.first[0]
                 all_7_days_values = array_of_tuple.map{ |tuple| tuple[1].to_s }.join(", ")
-                "Day #{first_of_7_days.to_s("%F")}: #{all_7_days_values}" 
-            }.join("\n")
-        }.join("\n\n")
+                "\tDay #{first_of_7_days.to_s("%F")}: #{all_7_days_values}" 
+            }.join(EOL)
+            "  " + month + ":" + EOL + values_alldays_month
+        }.join(EOL) + EOL * 2
     end
     def format_prospections_month(values_per_month, date, last_day)
         while date <= last_day
@@ -48,8 +50,17 @@ class Data
         end
     end
     def formatted_monetary_changes
-        sort_periodic_montary_changes
-        periodic_montary_changes.map(&.to_s).join("\n")
+        incomes_str = periodic_montary_changes
+            .select{|pmc| pmc.value.positive}
+            .sort_by{|pmc| -pmc.value.value_in_cents}
+            .map(&.to_s).join("\n")
+        expenses_str = periodic_montary_changes
+            .reject{|pmc| pmc.value.positive}
+            .sort_by{|pmc| -pmc.value.value_in_cents}
+            .map(&.to_s).join("\n")
+        incomes_str = "None" if incomes_str.empty?
+        expenses_str = "None" if incomes_str.empty?
+        "  Incomes:#{EOL}#{incomes_str}#{EOL}  Expenses:#{EOL}#{expenses_str}#{EOL * 2}"
     end
     def add_periodic_montary_changes (change : PeriodicMonetaryChange)
         periodic_montary_changes << change
