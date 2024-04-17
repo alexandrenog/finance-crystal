@@ -2,32 +2,36 @@ require "yaml"
 
 class PeriodicMonetaryChange
     include YAML::Serializable
-    property value : MonetaryValue, interval_type : IntervalType, start_after : Int64
+    property value : MonetaryValue
+    property interval_type : IntervalType
     property title : String
-    def initialize(@value : MonetaryValue, @interval_type : IntervalType, @start_after : Int64, @title : String)
+    property start_at : Time
+    def initialize(@value : MonetaryValue, @interval_type : IntervalType, @start_at : Time, @title : String)
     end
     def to_s(io : IO)
-        io << "#{@value} #{@interval_type}, starting in #{@start_after} days"
+        io << "#{@value} #{@interval_type}, #{@start_at > today ? "starts" : "started"} on #{@start_at.to_s("%F")}"
         if(!title.empty?)
             io << "\t -  " << @title 
         end
     end
-    def applies_to?(day : Int64)
-        return false if(day <= start_after)
+    def applies_to?(day : Time)
+        return false if(day < @start_at)
 
-        effective_day = day - start_after - 1
+        day_difference = (day - @start_at).days
 
         case interval_type
         when IntervalType::MONTHLY
-            return true if effective_day % 30 == 0
+            return true if heuristically_the_same_day(day, @start_at)
         when IntervalType::WEEKLY
-            return true if effective_day % 7 == 0
+            return true if day_difference % 7 == 0
         when IntervalType::DAILY
             return true
         when IntervalType::FIVEDAYS_A_WEEK
-            return true if effective_day % 7 <= 5
+            return true if day_difference % 7 <= 5
         when IntervalType::TWODAYS_A_WEEK
-            return true if effective_day % 7 <= 2
+            return true if day_difference % 7 <= 2
+        when IntervalType::ONCE
+            return true if day_difference == 0
         end
         return false
     end

@@ -1,8 +1,8 @@
 require "./option.cr"
 class OptionGroup
     EMPTY = OptionGroup.new([] of Option).with_cancel("Go Back")
-    property options : Array(Option)
-    def initialize(@options : Array(Option)) 
+    property options : Array(Option), title : String
+    def initialize(@options : Array(Option), @title : String = "") 
         @options.each_with_index do |opt,i| 
             opt.index ||= i
          end
@@ -23,6 +23,7 @@ class OptionGroup
     end
 
     def ask
+        puts @title if !@title.empty?
         puts self
         print "Select Option: "
         opt_index = read_int - 1

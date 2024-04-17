@@ -7,6 +7,7 @@ class InfoRow
         if !data.name.empty?
             io << "\t Username = " + data.name
         end
+        io << "\t\t Date = #{today.to_s("%F")}"
         io << EOL
     end
 end

@@ -4,6 +4,7 @@ enum IntervalType
     DAILY
     FIVEDAYS_A_WEEK
     TWODAYS_A_WEEK
+    ONCE
 
     def to_s(io : IO)
         case self
@@ -16,22 +17,29 @@ enum IntervalType
         when FIVEDAYS_A_WEEK
             io << "five days a week"
         when TWODAYS_A_WEEK
-            io <<  "two days a week"
+            io << "two days a week"
+        when ONCE
+            io << "once"
         end
     end
 end
 
+def intervalTypeOption(type : IntervalType)
+    Option.new(type.to_s.capitalize, type.value)
+end
 INCOME_INTERVALS_OPTS = OptionGroup.new([
-    Option.new("Monthly",0),
-    Option.new("Weekly",1),
-    Option.new("Five days a Week",3)
-])
+    intervalTypeOption(IntervalType::ONCE),
+    intervalTypeOption(IntervalType::MONTHLY),
+    intervalTypeOption(IntervalType::WEEKLY),
+    intervalTypeOption(IntervalType::FIVEDAYS_A_WEEK)
+], "This transaction happens:")
 
 
 EXPENSE_INTERVALS_OPTS = OptionGroup.new([
-    Option.new("Monthly", 0),
-    Option.new("Weekly", 1),
-    Option.new("Daily", 2),
-    Option.new("Five days a Week", 3),
-    Option.new("Two days a Week", 4)
-])
+    intervalTypeOption(IntervalType::ONCE),
+    intervalTypeOption(IntervalType::MONTHLY),
+    intervalTypeOption(IntervalType::WEEKLY),
+    intervalTypeOption(IntervalType::DAILY),
+    intervalTypeOption(IntervalType::FIVEDAYS_A_WEEK),
+    intervalTypeOption(IntervalType::TWODAYS_A_WEEK)
+], "This transaction happens:")

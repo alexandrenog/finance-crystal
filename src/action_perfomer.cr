@@ -22,33 +22,36 @@ class ActionPerformer
         data.current_balance = MonetaryValue.from_float(new_balance)
     end
     def self.add_periodic_income(data)
-        value = MonetaryValue.from_float(read_float("Insert Income Value = $"))
+        title = read_str("Title (\".\" for empty) = ").chomp
+        title = "" if title == "."
         if index = INCOME_INTERVALS_OPTS.ask.index
-            start_after = read_int("Start after N days = ")
-            title = read_str("Give it a title ( _ for empty) = ").chomp
-            title = "" if title == "_"
-            data.add_periodic_montary_changes PeriodicMonetaryChange.new(value, IntervalType.from_value(index), start_after, title)
+            start_at_str = read_str("Start on (\"YYYY-MM-DD\" date or \".\" for today) = ").chomp
+            start_at = (start_at_str == ".") ? today : parse_day(start_at_str)
+            value = MonetaryValue.from_float(read_float("Income Value = $"))
+            data.add_periodic_montary_changes PeriodicMonetaryChange.new(value, IntervalType.from_value(index), start_at, title)
         end
     end
     def self.add_periodic_expense(data)
-        value = MonetaryValue.from_float(read_float("Insert Expense Value = $")).negative
+        title = read_str("Title (\".\" for empty) = ").chomp
+        title = "" if title == "_"
         if index = EXPENSE_INTERVALS_OPTS.ask.index
-            start_after = read_int("Start after N days = ")
-            title = read_str("Give it a title ( _ for empty) = ").chomp
-            title = "" if title == "_"
-            data.add_periodic_montary_changes PeriodicMonetaryChange.new(value, IntervalType.from_value(index), start_after, title)
+            start_at_str = read_str("Start on (\"YYYY-MM-DD\" date or \".\" for today) = ").chomp
+            start_at = (start_at_str == ".") ? today : parse_day(start_at_str)
+            value = MonetaryValue.from_float(read_float("Expense Value = $")).negative
+            data.add_periodic_montary_changes PeriodicMonetaryChange.new(value, IntervalType.from_value(index), start_at, title)
         end
     end
     def self.watch_prospections(data, app)
-        show_info(data.formatted_prospections, app)
+        show_info(data.formatted_prospections, "PROSPECTIONS", app)
     end
     def self.list_periodic_transactions(data, app)
-        show_info(data.formatted_monetary_changes, app)
+        show_info(data.formatted_monetary_changes, "TRANSACTIONS", app)
     end
 
     # auxiliary method (not an action)
-    def self.show_info(content,app)
+    def self.show_info(content, title, app)
         app.refresh_screen
+        puts title
         puts content
         watch_options = OptionGroup::EMPTY
         while option = watch_options.ask

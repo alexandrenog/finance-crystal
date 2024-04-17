@@ -11,7 +11,7 @@ class App
 
     def read_or_create_data
         begin
-            return Data.from_yaml(File.read(DATA_FILE))
+            return Data.from_yaml(File.read(Consts::DATA_FILE))
         rescue
             return Data.new(name: read_str("Insert Username: ")).save
         end
@@ -32,14 +32,14 @@ end
 App.new(
     OptionGroup.new([
         Option.new("Watch Prospections", Action::WATCH_PROSPECTIONS),
-        Option.new("Change Current Balance", Action::CHANGE_CURRENT_BALANCE),
-        Option.new("Add Periodic Income/Expense", 
+        Option.new("List Transactions", Action::LIST_PERIODIC_TRANSACTIONS),
+        Option.new("Register Income/Expense", 
             OptionGroup.new([
-                Option.new("Add Periodic Income", Action::ADD_PERIODIC_INCOME),
-                Option.new("Add Periodic Expense", Action::ADD_PERIODIC_EXPENSE)
+                Option.new("Register Income", Action::ADD_PERIODIC_INCOME),
+                Option.new("Register Expense", Action::ADD_PERIODIC_EXPENSE)
             ]).with_cancel(GO_BACK)
         ),
-        Option.new("List Periodic Transactions", Action::LIST_PERIODIC_TRANSACTIONS)
+        Option.new("Change Current Balance", Action::CHANGE_CURRENT_BALANCE)
     ]).with_cancel("Exit")
 ).run()
 
