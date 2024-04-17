@@ -22,6 +22,7 @@ pt:
     started: "começou"
     months: "Janeiro,Fevereiro,Março,Abril,Maio,Junho,Julho,Agosto,Setembro,Outubro,Novembro,Dezembro"
     _on: "em"
+    decimal_separator: ","
   insert:
     username: "Nome do Usuário: "
     new_balance: "Novo balanço = $"

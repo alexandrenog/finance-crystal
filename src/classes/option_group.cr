@@ -1,6 +1,6 @@
 require "./option.cr"
 class OptionGroup
-    property options : Array(Option), title : String
+    property options : Array(Option), title : String, has_locale : Bool = true
     def initialize(@options : Array(Option), @title : String = "") 
         @options.each_with_index do |opt,i| 
             opt.index ||= i
@@ -23,15 +23,20 @@ class OptionGroup
         @options << Option.cancel(desc)
         self
     end
+    
+    def no_locale
+        @has_locale = false
+        self
+    end
 
     def ask
         puts @title if !@title.empty?
         puts self
-        print I18n.t("label.select_option")
-        opt_index = read_int - 1
+        print (@has_locale ? I18n.t("label.select_option") : "Select Option / Secione uma Opção: ")
+        opt_index = ConsoleReader.read_int - 1
         while !self.include?(opt_index) 
-            print I18n.t("label.select_option")
-            opt_index = read_int - 1
+            print (@has_locale ? I18n.t("label.select_option") : "Select Option / Secione uma Opção: ")
+            opt_index = ConsoleReader.read_int - 1
         end
         self.choose(opt_index)
     end

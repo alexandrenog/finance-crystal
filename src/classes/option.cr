@@ -13,7 +13,10 @@ class Option
     def self.cancel(desc : String)
         Option.new(desc, -1)
     end
+    def get_index
+        @index.not_nil!
+    end
     def is_cancel?
-        @index.not_nil! == -1
+        get_index == -1
     end
 end

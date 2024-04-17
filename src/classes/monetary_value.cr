@@ -11,7 +11,7 @@ class MonetaryValue
     def to_s(io : IO)
         actual_value = (@value_in_cents / 100).to_i64
         cents_part = @value_in_cents % 100
-        io << "#{@positive ? "" : "-"}#{I18n.t("label.money_sign")}#{actual_value}.#{"%02d" % cents_part}"
+        io << "#{@positive ? "" : "-"}#{I18n.t("label.money_sign")}#{actual_value}#{I18n.t("label.decimal_separator")}#{"%02d" % cents_part}"
     end
     def self.zero
         MonetaryValue.new(0)

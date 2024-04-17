@@ -22,6 +22,7 @@ en:
     started: "started"
     months: "January,February,March,April,May,June,July,August,September,October,November,December"
     _on: "on"
+    decimal_separator: "."
   insert:
     username: "Insert Username: "
     new_balance: "Insert New balance = $"

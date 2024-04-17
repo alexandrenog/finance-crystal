@@ -9,8 +9,7 @@ enum IntervalType
     def to_text
         I18n.t("interval_type."+self.to_s.downcase)
     end
-end
-
-def intervalTypeOption(type : IntervalType)
-    Option.new(type.to_text.capitalize, type.value)
+    def to_option
+        Option.new(self.to_text.capitalize, self.value)
+    end
 end
