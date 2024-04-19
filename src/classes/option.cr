@@ -17,6 +17,9 @@ class Option
         @index.not_nil!
     end
     def is_cancel?
-        get_index == -1
+        if index_not_nil = @index
+            return index_not_nil == -1
+        end
+        return false
     end
 end

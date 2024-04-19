@@ -8,10 +8,17 @@ class PeriodicMonetaryChange
     property start_at : Time
     def initialize(@value : MonetaryValue, @interval_type : IntervalType, @start_at : Time, @title : String)
     end
-    def to_s(io : IO)
-        io << "\t#{@value} #{@interval_type.to_text}, #{@start_at > today ? I18n.t("label.starts") : I18n.t("label.started")} #{I18n.t("label._on")} #{@start_at.to_s("%F")}"
+    def to_s
+        self.to_text
+    end
+    def to_text(index : Int | Nil = nil)
+        text = "\t" 
+        if indexNotNil = index
+            text += "#{indexNotNil}. "
+        end
+        text+="#{@value} #{@interval_type.to_text}, #{@start_at > today ? I18n.t("label.starts") : I18n.t("label.started")} #{I18n.t("label._on")} #{@start_at.to_s("%F")}"
         if(!title.empty?)
-            io << "\t -  " << @title 
+            text+= "\t -  " + @title 
         end
     end
     def applies_to?(day : Time)

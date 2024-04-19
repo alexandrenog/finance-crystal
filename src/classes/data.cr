@@ -7,18 +7,18 @@ class Data
     include YAML::Serializable
     property current_balance : MonetaryValue
     property name : String
-    property periodic_montary_changes : Array(PeriodicMonetaryChange)
+    property periodic_monetary_changes : Array(PeriodicMonetaryChange)
     property locale : String
     def initialize(@locale : String, @current_balance : MonetaryValue = MonetaryValue.zero, @name : String = "")
-        @periodic_montary_changes = [] of PeriodicMonetaryChange
+        @periodic_monetary_changes = [] of PeriodicMonetaryChange
     end
 
-    def add_periodic_montary_changes (change : PeriodicMonetaryChange)
-        periodic_montary_changes << change
-        sort_periodic_montary_changes
+    def add_periodic_monetary_changes (change : PeriodicMonetaryChange)
+        @periodic_monetary_changes << change
+        sort_periodic_monetary_changes
     end
-    def sort_periodic_montary_changes
-        periodic_montary_changes.sort_by! &.value.signed_cents
+    def sort_periodic_monetary_changes
+        @periodic_monetary_changes.sort_by! &.value.signed_cents
     end
     def save
         File.write(Consts::DATA_FILE, self.to_yaml)
@@ -27,7 +27,7 @@ class Data
 
     # Information Composer Methods
     def occurrences_in(day : Time)
-        @periodic_montary_changes.select{|periodic_money_change| periodic_money_change.applies_to?(day)}
+        @periodic_monetary_changes.select{|periodic_money_change| periodic_money_change.applies_to?(day)}
     end
     def formatted_prospections
         months=[] of String
@@ -69,12 +69,16 @@ class Data
         I18n.t("label.months").split(",")[n-1]
     end
 
-    def formatted_monetary_changes
-        incomes_str = periodic_montary_changes
+    def formatted_monetary_changes(indexed? : Bool = false)
+        if indexed?
+            return periodic_monetary_changes.map_with_index{|pmc,i| pmc.to_text(i+1)}.join("\n")
+        end
+
+        incomes_str = periodic_monetary_changes
             .select{|pmc| pmc.value.positive}
             .sort_by{|pmc| -pmc.value.value_in_cents}
             .map(&.to_s).join("\n")
-        expenses_str = periodic_montary_changes
+        expenses_str = periodic_monetary_changes
             .reject{|pmc| pmc.value.positive}
             .sort_by{|pmc| -pmc.value.value_in_cents}
             .map(&.to_s).join("\n")

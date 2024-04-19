@@ -8,6 +8,9 @@ pt:
     change_current_balance: "Atualizar Balanço"
     exit: "Fechar"
     go_back: "Voltar"
+    delete_transaction: "Apagar Transação"
+    confirm: "Confirma"
+    cancel: "Cancela"
   label:
     day: "Dia"
     none: "Nenhum"
@@ -31,9 +34,13 @@ pt:
     income_value: "Valor da Renda = $"
     expense_value: "Valor da Despesa = $"
     this_transaction_happens: "Essa transação acontece:"
+    transaction_number: "\n\tInsira o número da transação a ser apagada = "
+  confirm:
+    transaction_deletion: "Tem certeza que deseja remover esta Transação?%{eol}%{eol}%{transaction}%{eol}%{eol}"
   title:
     prospections: "PROSPECÇÕES"
     transactions: "TRANSAÇÕES"
+    transaction_deletion: "APAGAMENTO DE TRANSAÇÃO"
   interval_type:
     monthly: "mensalmente"
     weekly:  "semanalmente"

@@ -14,6 +14,8 @@ class ActionPerformer
             watch_prospections(data, app)
         when Action::LIST_PERIODIC_TRANSACTIONS
             list_periodic_transactions(data, app)
+        when Action::DELETE_TRANSACTION
+            delete_transaction(data,app)
         end
         data.save
     end 
@@ -44,15 +46,8 @@ class ActionPerformer
         end
         value = MonetaryValue.from_float(ConsoleReader.read_float(I18n.t( income? ? "insert.income_value" : "insert.expense_value")))
         value = value.negative unless income? 
-        data.add_periodic_montary_changes PeriodicMonetaryChange.new(value, IntervalType.from_value(index), start_at.not_nil!, title)
+        data.add_periodic_monetary_changes PeriodicMonetaryChange.new(value, IntervalType.from_value(index), start_at.not_nil!, title)
     end
-    def self.watch_prospections(data, app)
-        show_info(data.formatted_prospections, I18n.t("title.prospections"), app)
-    end
-    def self.list_periodic_transactions(data, app)
-        show_info(data.formatted_monetary_changes, I18n.t("title.transactions"), app)
-    end
-
     # auxiliary method (not an action)
     def self.show_info(content, title, app)
         app.refresh_screen(title)
@@ -62,6 +57,43 @@ class ActionPerformer
             break if option.is_cancel?
             app.refresh_screen
             puts content
+        end
+    end
+    def self.watch_prospections(data, app)
+        show_info(data.formatted_prospections, I18n.t("title.prospections"), app)
+    end
+    def self.list_periodic_transactions(data, app)
+        app.refresh_screen(I18n.t("title.transactions"))
+        puts data.formatted_monetary_changes
+        options = self.build_transactions_page_options(data)
+        while option = options.ask
+            break if option.is_cancel?
+            exec(option.action.not_nil!, app)
+            app.refresh_screen(I18n.t("title.transactions"))
+            puts data.formatted_monetary_changes
+            options = self.build_transactions_page_options(data)
+        end
+    end
+    def self.build_transactions_page_options(data)
+        option_group = OptionGroup.empty.with_cancel(I18n.t("option.go_back"))
+        option_group.options << Option.new(I18n.t("option.delete_transaction"), Action::DELETE_TRANSACTION) unless data.periodic_monetary_changes.empty?
+        option_group
+    end
+    def self.delete_transaction(data,app)
+        app.refresh_screen(I18n.t("title.transaction_deletion"))
+        max_index = data.periodic_monetary_changes.size() - 1
+        puts data.formatted_monetary_changes(true)
+        index = -1
+        while index < 0 || index > max_index
+            index = ConsoleReader.read_int(I18n.t("insert.transaction_number")) - 1
+        end
+        
+        app.refresh_screen(I18n.t("title.transaction_deletion"))
+        pmc = data.periodic_monetary_changes[index]
+        puts I18n.t("confirm.transaction_deletion", transaction: pmc.to_text, eol: EOL)
+        answer = OptionGroup.new([Option.new(I18n.t("option.confirm"), 1)]).with_cancel(I18n.t("option.cancel")).ask
+        if answer.get_index == 1
+            data.periodic_monetary_changes.delete_at(index)
         end
     end
 end
